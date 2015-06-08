@@ -1,6 +1,6 @@
 // GameSettings
 var GameSettings = function () {
-    "use strict";
+    'use strict';
     this.PLAYGROUND_WIDTH = 505;
     this.PLAYGROUND_HEIGHT = 606;
     this.PLAYGROUND_NUM_ROWS = 6;
@@ -8,12 +8,12 @@ var GameSettings = function () {
 };
 
 GameSettings.prototype.getPlayGroundStepX = function () {
-    "use strict";
+    'use strict';
     return this.PLAYGROUND_WIDTH / this.PLAYGROUND_NUM_COLS;
 };
 
 GameSettings.prototype.getPlayGroundStepY = function () {
-    "use strict";
+    'use strict';
     // Playboard is rather strange, sprites are overlapped so Y step is hardcodded.
     return 85;
 };

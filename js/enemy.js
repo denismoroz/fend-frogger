@@ -2,7 +2,7 @@
 
 // Enemies our player must avoid
 var Enemy = function (px, py, speed) {
-    "use strict";
+    'use strict';
 
     GameObject.call(this, px, py, 'images/enemy-bug.png');
     this.speed = speed;
@@ -14,7 +14,7 @@ Enemy.prototype.constructor = Enemy;
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function (dt) {
-    "use strict";
+    'use strict';
 
     this.x += dt * this.speed;
 

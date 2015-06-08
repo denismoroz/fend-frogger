@@ -2,12 +2,12 @@
 
 // Wrapper around enemies array. It will help to manage them.
 var AllEnemies = function () {
-    "use strict";
+    'use strict';
     this.enemies = [];
 };
 
 AllEnemies.prototype.render = function () {
-    "use strict";
+    'use strict';
 
     this.enemies.forEach(function (enemy) {
         enemy.render();
@@ -15,7 +15,7 @@ AllEnemies.prototype.render = function () {
 };
 
 AllEnemies.prototype.update = function (dt) {
-    "use strict";
+    'use strict';
     this.enemies.forEach(function (enemy) {
         enemy.update(dt);
     });
@@ -24,19 +24,19 @@ AllEnemies.prototype.update = function (dt) {
 // Random int gerator to place enemies randomly
 // Taken from: http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
 AllEnemies.prototype.getRandomInt = function (min, max) {
-    "use strict";
+    'use strict';
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 AllEnemies.prototype.add = function () {
-    "use strict";
+    'use strict';
     this.enemies.push(new Enemy(this.getRandomInt(0, 4),
             this.getRandomInt(1, 3),
             this.getRandomInt(50, 300)));
 };
 
 AllEnemies.prototype.reset = function () {
-    "use strict";
+    'use strict';
     this.enemies = [];
     this.add();
 };
@@ -44,7 +44,7 @@ AllEnemies.prototype.reset = function () {
 // Collision detection with game object.
 // Calculate position of the object on playboard and compare it with enemies objects.
 AllEnemies.prototype.checkCollisions = function (object) {
-    "use strict";
+    'use strict';
 
     var objectPosX = object.getPositionX();
     var objectPosY = object.getPositionY();

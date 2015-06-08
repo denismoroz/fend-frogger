@@ -2,7 +2,7 @@
 
 // Main actor of the game.
 var Player = function (px, py) {
-    "use strict";
+    'use strict';
     GameObject.call(this, px, py, 'images/char-boy.png');
 };
 
@@ -10,7 +10,7 @@ Player.prototype = Object.create(GameObject.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.handleInput = function (key) {
-    "use strict";
+    'use strict';
 
     var rightBorder = gameSettings.PLAYGROUND_WIDTH - gameSettings.getPlayGroundStepX();
 

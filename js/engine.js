@@ -1,3 +1,5 @@
+/*global gameSettings, player, lives, allEnemies, Resources */
+
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -15,6 +17,7 @@
  */
 
 var Engine = (function(global) {
+    'use strict';
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
@@ -41,6 +44,130 @@ var Engine = (function(global) {
         };
         player.handleInput(allowedKeys[e.keyCode]);
     });
+
+    /* This function is called by the render function and is called on each game
+     * tick. It's purpose is to then call the render functions you have defined
+     * on your enemy and player entities within app.js
+     */
+    function renderEntities() {
+        /* Loop through all of the objects within the allEnemies array and call
+         * the render function you have defined.
+         */
+        allEnemies.render();
+        player.render();
+        lives.render();
+    }
+
+    /* This function initially draws the "game level", it will then call
+     * the renderEntities function. Remember, this function is called every
+     * game tick (or loop of the game engine) because that's how games work -
+     * they are flipbooks creating the illusion of animation but in reality
+     * they are just drawing the entire screen over and over.
+     */
+    function render() {
+        /* This array holds the relative URL to the image used
+         * for that particular row of the game level.
+         */
+        var rowImages = [
+                'images/water-block.png',   // Top row is water
+                'images/stone-block.png',   // Row 1 of 3 of stone
+                'images/stone-block.png',   // Row 2 of 3 of stone
+                'images/stone-block.png',   // Row 3 of 3 of stone
+                'images/grass-block.png',   // Row 1 of 2 of grass
+                'images/grass-block.png'    // Row 2 of 2 of grass
+            ];
+
+        var row;
+        var col;
+
+        /* Loop through the number of rows and columns we've defined above
+         * and, using the rowImages array, draw the correct image for that
+         * portion of the "grid"
+         */
+        var stepX = gameSettings.getPlayGroundStepX();
+        var stepY = gameSettings.getPlayGroundStepY();
+
+
+        for (row = 0; row < gameSettings.PLAYGROUND_NUM_ROWS; row++) {
+            for (col = 0; col < gameSettings.PLAYGROUND_NUM_COLS; col++) {
+                /* The drawImage function of the canvas' context element
+                 * requires 3 parameters: the image to draw, the x coordinate
+                 * to start drawing and the y coordinate to start drawing.
+                 * We're using our Resources helpers to refer to our images
+                 * so that we get the benefits of caching these images, since
+                 * we're using them over and over.
+                 */
+                ctx.drawImage(Resources.get(rowImages[row]), col * stepX, row * stepY);
+            }
+        }
+
+        renderEntities();
+    }
+
+    /* This function does nothing but it could have been a good place to
+     * handle game reset states - maybe a new game menu or a game over screen
+     * those sorts of things. It's only called once by the init() method.
+     */
+    function reset() {
+        player.moveToStart();
+        allEnemies.reset();
+        lives.reset();
+    }
+
+
+    /* This is called by the update function  and loops through all of the
+     * objects within your allEnemies array as defined in app.js and calls
+     * their update() methods. It will then call the update function for your
+     * player object. These update methods should focus purely on updating
+     * the data/properties related to  the object. Do your drawing in your
+     * render methods.
+     */
+    function updateEntities(dt) {
+        allEnemies.update(dt);
+        player.update(dt);
+    }
+
+        // Checking if player is reached watter line, add one life and move it back to begin.
+    function checkLevelUp() {
+        if (player.getPositionY() === 0) {
+            player.moveToStart();
+            lives.add();
+            allEnemies.add();
+        }
+    }
+
+    // Player faced enemy. remove life and move it back to begin.
+    // if there is no lifes then reset game.
+    function restartLevel() {
+        player.moveToStart();
+        lives.remove();
+        if (!lives.isAlive()) {
+            reset();
+        }
+    }
+
+    function checkCollisions() {
+        if (allEnemies.checkCollisions(player)) {
+            restartLevel();
+        }
+    }
+
+
+    /* This function is called by main (our game loop) and itself calls all
+     * of the functions which may need to update entity's data. Based on how
+     * you implement your collision detection (when two entities occupy the
+     * same space, for instance when your character should die), you may find
+     * the need to add an additional function call here. For now, we've left
+     * it commented out - you may or may not want to implement this
+     * functionality this way (you could just implement collision detection
+     * on the entities themselves within your app.js file).
+     */
+    function update(dt) {
+        updateEntities(dt);
+        checkCollisions();
+        checkLevelUp();
+    }
+
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -70,7 +197,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -80,125 +207,6 @@ var Engine = (function(global) {
         reset();
         lastTime = Date.now();
         main();
-    }
-
-    /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
-     */
-    function update(dt) {
-        updateEntities(dt);
-        checkCollisions();
-        checkLevelUp();
-    }
-
-    // Checking if player is reached watter line, add one life and move it back to begin.
-    function checkLevelUp() {
-        if (player.getPositionY() == 0) {
-            player.moveToStart();
-            lives.add();
-            allEnemies.add();
-        }
-    }
-
-    // Player faced enemy. remove life and move it back to begin.
-    // if there is no lifes then reset game.
-    function restartLevel() {
-        player.moveToStart();
-        lives.remove();
-        if (!lives.isAlive()) {
-            reset();
-        }
-    }
-
-    function checkCollisions() {
-        if (allEnemies.checkCollisions(player)) {
-            restartLevel();
-        }
-    }
-
-    /* This is called by the update function  and loops through all of the
-     * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to  the object. Do your drawing in your
-     * render methods.
-     */
-    function updateEntities(dt) {
-        allEnemies.update(dt);
-        player.update(dt);
-    }
-
-    /* This function initially draws the "game level", it will then call
-     * the renderEntities function. Remember, this function is called every
-     * game tick (or loop of the game engine) because that's how games work -
-     * they are flipbooks creating the illusion of animation but in reality
-     * they are just drawing the entire screen over and over.
-     */
-    function render() {
-        /* This array holds the relative URL to the image used
-         * for that particular row of the game level.
-         */
-        var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
-            row, col;
-
-        /* Loop through the number of rows and columns we've defined above
-         * and, using the rowImages array, draw the correct image for that
-         * portion of the "grid"
-         */
-        var stepX = gameSettings.getPlayGroundStepX();
-        var stepY = gameSettings.getPlayGroundStepY();
-
-
-        for (row = 0; row < gameSettings.PLAYGROUND_NUM_ROWS; row++) {
-            for (col = 0; col < gameSettings.PLAYGROUND_NUM_COLS; col++) {
-                /* The drawImage function of the canvas' context element
-                 * requires 3 parameters: the image to draw, the x coordinate
-                 * to start drawing and the y coordinate to start drawing.
-                 * We're using our Resources helpers to refer to our images
-                 * so that we get the benefits of caching these images, since
-                 * we're using them over and over.
-                 */
-                ctx.drawImage(Resources.get(rowImages[row]), col * stepX, row * stepY);
-            }
-        }
-
-        renderEntities();
-    }
-
-    /* This function is called by the render function and is called on each game
-     * tick. It's purpose is to then call the render functions you have defined
-     * on your enemy and player entities within app.js
-     */
-    function renderEntities() {
-        /* Loop through all of the objects within the allEnemies array and call
-         * the render function you have defined.
-         */
-        allEnemies.render();
-        player.render();
-        lives.render();
-    }
-
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
-     */
-    function reset() {
-        player.moveToStart();
-        allEnemies.reset();
-        lives.reset();
     }
 
     /* Go ahead and load all of the images we know we're going to need to

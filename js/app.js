@@ -1,4 +1,4 @@
-"use strict";
+/*global GameSettings, Lives, AllEnimies, Player */
 
 // Init game objects.
 var gameSettings = new GameSettings();
