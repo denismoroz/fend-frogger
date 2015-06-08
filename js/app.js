@@ -1,3 +1,4 @@
+"use strict";
 
 // Init game objects.
 var gameSettings = new GameSettings();

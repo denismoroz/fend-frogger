@@ -1,17 +1,19 @@
-
 // GameSettings
-var GameSettings = function() {
-    this.playGroundWidth = 505;
-    this.playGroundHeight = 606;
-    this.playGroundNumRows = 6;
-    this.playGroundNumCols = 5;
+var GameSettings = function () {
+    "use strict";
+    this.PLAYGROUND_WIDTH = 505;
+    this.PLAYGROUND_HEIGHT = 606;
+    this.PLAYGROUND_NUM_ROWS = 6;
+    this.PLAYGROUND_NUM_COLS = 5;
 };
 
 GameSettings.prototype.getPlayGroundStepX = function () {
-    return this.playGroundWidth / this.playGroundNumCols;
+    "use strict";
+    return this.PLAYGROUND_WIDTH / this.PLAYGROUND_NUM_COLS;
 };
 
 GameSettings.prototype.getPlayGroundStepY = function () {
+    "use strict";
     // Playboard is rather strange, sprites are overlapped so Y step is hardcodded.
     return 85;
 };

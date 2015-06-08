@@ -26,8 +26,8 @@ var Engine = (function(global) {
         lastTime;
 
 
-    canvas.width = gameSettings.playGroundWidth;
-    canvas.height = gameSettings.playGroundHeight;
+    canvas.width = gameSettings.PLAYGROUND_WIDTH;
+    canvas.height = gameSettings.PLAYGROUND_HEIGHT;
     doc.body.appendChild(canvas);
 
     // This listens for key presses and sends the keys to your
@@ -162,8 +162,8 @@ var Engine = (function(global) {
         var stepY = gameSettings.getPlayGroundStepY();
 
 
-        for (row = 0; row < gameSettings.playGroundNumRows; row++) {
-            for (col = 0; col < gameSettings.playGroundNumCols; col++) {
+        for (row = 0; row < gameSettings.PLAYGROUND_NUM_ROWS; row++) {
+            for (col = 0; col < gameSettings.PLAYGROUND_NUM_COLS; col++) {
                 /* The drawImage function of the canvas' context element
                  * requires 3 parameters: the image to draw, the x coordinate
                  * to start drawing and the y coordinate to start drawing.
